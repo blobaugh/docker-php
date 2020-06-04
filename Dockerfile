@@ -1,4 +1,4 @@
-FROM php:7.4-apache
+FROM php:7.2-apache
 
 LABEL maintainer="ben@lobaugh.net"
 
@@ -24,7 +24,6 @@ RUN set -eux; \
         libxml2-dev \
         rsync \
         libcap2-bin \
-        less \
         wget; \
     install-php-extensions \
         bcmath \
@@ -45,8 +44,6 @@ RUN set -eux; \
         soap \
         xsl \
         zip ; \
-    pecl install xdebug; \
-    docker-php-ext-enable xdebug; \
     pecl install imagick-3.4.4; \
     docker-php-ext-enable imagick; \
     a2enmod rewrite headers expires;
@@ -84,10 +81,6 @@ WORKDIR /var/www/html
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
     && chmod +x wp-cli.phar \
     && mv wp-cli.phar /usr/local/bin/wp;
-
-# Developer assistance
-RUN echo "alias wp='wp --allow-root' >> ~/.bashrc"
-
 # Cleanup
 RUN rm -rf /usr/src/*
 
