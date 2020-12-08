@@ -1,4 +1,4 @@
-FROM php:7.4-apache
+FROM php:8.0.0-apache
 
 LABEL maintainer="ben@lobaugh.net"
 
@@ -47,8 +47,8 @@ RUN set -eux; \
         zip ; \
     pecl install xdebug; \
     docker-php-ext-enable xdebug; \
-    pecl install imagick-3.4.4; \
-    docker-php-ext-enable imagick; \
+#    pecl install imagick; \
+#    docker-php-ext-enable imagick; \
     a2enmod rewrite headers expires;
 
 # Install Composer
