@@ -25,6 +25,7 @@ RUN set -eux; \
         rsync \
         libcap2-bin \
         less \
+        gnupg \
         wget; \
     install-php-extensions \
         bcmath \
@@ -45,11 +46,26 @@ RUN set -eux; \
         soap \
         xsl \
         zip ; \
-    pecl install xdebug; \
-    docker-php-ext-enable xdebug; \
     pecl install imagick-3.4.4; \
     docker-php-ext-enable imagick; \
     a2enmod rewrite headers expires;
+
+RUN apt-get update && \
+    apt-get -yq install wget && \
+    wget -O - https://download.newrelic.com/548C16BF.gpg | apt-key add - && \
+    echo "deb http://apt.newrelic.com/debian/ newrelic non-free" > /etc/apt/sources.list.d/newrelic.list
+ 
+# Setup environment variables for initializing New Relic
+ENV NR_INSTALL_SILENT 1
+
+RUN apt-get update && \
+    apt-get -yq install newrelic-php5 && \
+    newrelic-install install;
+
+RUN sed -i -e "s/REPLACE_WITH_REAL_KEY/\${NEW_RELIC_LICENSE_KEY}/" \
+  -e "s/newrelic.appname[[:space:]]=[[:space:]].*/newrelic.appname=\"\${NEW_RELIC_APP_NAME};All Apps\"/" \
+  -e '$anewrelic.distributed_tracing_enabled=true' \
+  $(php -r "echo(PHP_CONFIG_FILE_SCAN_DIR);")/newrelic.ini
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
