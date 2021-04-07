@@ -104,6 +104,10 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 # Developer assistance
 RUN echo "alias wp='wp --allow-root' >> ~/.bashrc"
 
+# Hack apache2.conf to use the X-Forwarded-For header.
+# This is important when running behind a revers proxy. If you are not behind a reverse proxy, this step may be uneccessary.
+RUN sed -i "s/%h/%{X-Forwarded-For}i/g" /etc/apache2/apache2.conf
+
 # Cleanup
 RUN rm -rf /usr/src/*
 
