@@ -1,4 +1,4 @@
-FROM php:8.1.3-apache
+FROM php:8.1.11-apache
 
 LABEL maintainer="ben@lobaugh.net"
 
